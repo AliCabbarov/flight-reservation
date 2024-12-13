@@ -52,7 +52,7 @@ jobs:
             bash -c '
             for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr "," " "); do
               echo "Deploying $service to Kubernetes..."
-              kubectl apply -f flight-reservation/k8s/$service-deploy.yaml
+              apply -f flight-reservation/k8s/$service-deploy.yaml
             done
             '
         env:
