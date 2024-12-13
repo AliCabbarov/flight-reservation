@@ -18,10 +18,23 @@ jobs:
       - name: Detect Changed Microservices
         id: detect
         run: |
-          # Find changes in microservices directories (from the root directory)
+          # Git diff ile değişiklikleri kontrol et
+          echo "Checking for changes in the microservices..."
+          git diff --name-only HEAD^ HEAD
+          
+          # Mikroservislerin bulunduğu dizinlerdeki değişiklikleri filtrele
           CHANGED_SERVICES=$(git diff --name-only HEAD^ HEAD | grep -E '^(flight-ms|user-ms|notification-ms)/' | cut -d'/' -f1 | sort -u | tr '\n' ',')
-          echo "services=${CHANGED_SERVICES}" >> $GITHUB_ENV
-          echo "Changed services: ${CHANGED_SERVICES}"
+          
+          echo "Detected changes in the following services: $CHANGED_SERVICES"
+          
+          # Eğer değişiklik varsa, değişen servisleri GitHub environment'a yaz
+          if [ -z "$CHANGED_SERVICES" ]; then
+            echo "No changes detected in the specified microservices."
+          else
+            echo "services=${CHANGED_SERVICES}" >> $GITHUB_ENV
+          fi
+        env:
+          services: ${{ env.services }}
 
   Build-and-Deploy:
     needs: Detect-Changes
@@ -38,20 +51,28 @@ jobs:
 
       - name: Build and Push Docker Images for Changed Microservices
         run: |
-          # Ensure we're in the root directory where flight-ms, user-ms, and notification-ms folders are
-          for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr ',' ' '); do
-            echo "Building and pushing Docker image for $service..."
-            docker build -t ${{ secrets.DOCKER_USERNAME }}/$service:latest $service
-            docker push ${{ secrets.DOCKER_USERNAME }}/$service:latest
-          done
+          # Eğer değişen servisler varsa, Docker image'ları oluştur ve push et
+          if [ -z "${{ needs.Detect-Changes.outputs.changed_services }}" ]; then
+            echo "No services detected for build and deploy."
+          else
+            for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr ',' ' '); do
+              echo "Building and pushing Docker image for $service..."
+              docker build -t ${{ secrets.DOCKER_USERNAME }}/$service:latest $service
+              docker push ${{ secrets.DOCKER_USERNAME }}/$service:latest
+            done
+          fi
 
       - name: Deploy to Kubernetes
         run: |
-          # Ensure we're in the root directory
-          for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr "," " "); do
-            echo "Deploying $service to Kubernetes..."
-            kubectl apply -f k8s/$service-deploy.yaml
-          done
+          # Eğer değişen servisler varsa, Kubernetes üzerine deploy et
+          if [ -z "${{ needs.Detect-Changes.outputs.changed_services }}" ]; then
+            echo "No services detected for Kubernetes deployment."
+          else
+            for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr "," " "); do
+              echo "Deploying $service to Kubernetes..."
+              kubectl apply -f k8s/$service-deploy.yaml
+            done
+          fi
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
