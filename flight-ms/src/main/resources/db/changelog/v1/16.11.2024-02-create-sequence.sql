@@ -1,0 +1,4 @@
+CREATE SEQUENCE entity_seq
+    START WITH 200
+    INCREMENT BY 1
+    NO CYCLE;

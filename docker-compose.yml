@@ -1,0 +1,36 @@
+version: '3.3'
+services:
+  user-ms-db:
+    image: postgres
+    ports:
+      - "9003:5432"
+    volumes:
+      - db_data_user:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+
+  flight-ms-db:
+    image: postgres
+    ports:
+      - "9001:5432"
+    volumes:
+      - db_data_flight:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+
+  notification-ms-db:
+    image: postgres
+    ports:
+      - "9002:5432"
+    volumes:
+      - db_data_notification:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+
+volumes:
+  db_data_user: {}
+  db_data_flight: {}
+  db_data_notification: {}

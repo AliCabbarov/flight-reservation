@@ -1,0 +1,4 @@
+kafka:
+  topic:
+    admin-topic: admin-notification
+    operator-topic: operator-notification

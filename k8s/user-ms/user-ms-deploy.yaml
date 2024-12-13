@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-ms-backend-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-ms-backend-tier
+  template:
+    metadata:
+      labels:
+        app: user-ms-backend-tier
+    spec:
+      containers:
+        - name: user-ms-backend
+          image: srthealikk/flight-user-ms:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_URL
+              value: jdbc:postgresql://postgresql-svc-cip:5432/postgres
+            - name: DB_USERNAME
+              value: postgres
+            - name: DB_PASSWORD
+              value: '123456'
+            - name: APP_HOST
+              value: "34.76.44.68"
+            - name: APP_PORT
+              value: "80"
+            - name: KAFKA_HOST
+              value: "kafka:9092"

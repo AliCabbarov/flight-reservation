@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/flight-ms/src/main/resources/db/changelog/v1/17.11.2024-01-create-table-airline.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/flight-ms/src/main/resources/db/changelog/v1/17.11.2024-02-create-table-flight.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/flight-ms/src/main/resources/db/changelog/v1/17.11.2024-03-create-table-flight-plane-place.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/flight-ms/src/main/resources/db/changelog/v1/17.11.2024-04-create-table-plane.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/flight-ms/src/main/resources/db/changelog/v1/17.11.2024-08-create-foreign-constraint.sql" dialect="PostgreSQL" />
+  </component>
+</project>

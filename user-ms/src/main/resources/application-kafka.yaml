@@ -1,0 +1,9 @@
+kafka:
+  topic:
+    user-registration: user-registration
+    reset-password: reset-password
+    operator-register: operator-register
+
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST:localhost:9092}

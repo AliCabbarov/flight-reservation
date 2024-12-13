@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-azerbaijan-only
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 5.197.0.0/16
+        - ipBlock:
+            cidr: 31.170.80.0/20
+        - ipBlock:
+            cidr: 77.40.0.0/14
