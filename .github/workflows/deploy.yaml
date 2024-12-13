@@ -21,7 +21,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t /user-ms/Dockerfile ${{ secrets.DOCKER_USERNAME }}/user-ms:latest .
+          docker buildx build -f ./user-ms/Dockerfile ${{ secrets.DOCKER_USERNAME }}/user-ms:latest .
 
       - name: Push Docker image to Docker Hub
         run: |
