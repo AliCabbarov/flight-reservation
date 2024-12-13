@@ -49,15 +49,17 @@ jobs:
 #    needs: Gradle-Docker-Build
     runs-on: ubuntu-latest
     steps:
+
+          
+
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+
       - name: where is the file
         run: |
           cd k8s
           ls -l
-          
-
-#      - uses: actions/checkout@v3
-#        with:
-#          ref: main
 #
 #
 #      - name: kubectl - Google Cloud GKE cluster
