@@ -39,6 +39,7 @@ jobs:
 
       - name: Build Docker image
         run: |
+          cd user-ms
           ls -l
           docker build -t ${{ secrets.DOCKER_USERNAME }}/user-ms:latest -f user-ms/Dockerfile .
 
