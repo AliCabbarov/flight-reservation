@@ -39,7 +39,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-ms:latest -f Dockerfile .
+          ls -l
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-ms:latest -f user-ms/Dockerfile .
 
       - name: Push Docker image to Docker Hub
         run: |
