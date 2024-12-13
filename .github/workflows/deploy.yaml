@@ -49,22 +49,26 @@ jobs:
 #    needs: Gradle-Docker-Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: main
-
       - name: where is the file
         run: |
+          cd k8s
           ls -l
-      - name: kubectl - Google Cloud GKE cluster
-        uses: ameydev/gke-kubectl-action@master
-        with:
-          args: apply -f k8s/user-ms-deploy.yaml
-        env:
-          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
-          CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
-          ZONE_NAME: ${{ secrets.GKE_ZONE_NAME }}
+          
+
+#      - uses: actions/checkout@v3
+#        with:
+#          ref: main
+#
+#
+#      - name: kubectl - Google Cloud GKE cluster
+#        uses: ameydev/gke-kubectl-action@master
+#        with:
+#          args: apply -f k8s/user-ms-deploy.yaml
+#        env:
+#          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+#          APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+#          CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
+#          ZONE_NAME: ${{ secrets.GKE_ZONE_NAME }}
 
 
 
