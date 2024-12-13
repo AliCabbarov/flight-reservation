@@ -7,7 +7,6 @@ on:
 
 jobs:
   Docker-Build:
-    needs: Gradle-build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
