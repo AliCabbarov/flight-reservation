@@ -18,7 +18,8 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '17'
-
+      - name: Ensure gradlew has execute permissions
+        run: chmod +x ./gradlew
       - name: Build with Gradle
         run: ./gradlew clean build
 
