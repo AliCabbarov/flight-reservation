@@ -18,26 +18,31 @@ jobs:
       - name: Detect Changed Microservices
         id: detect
         run: |
-          # Eğer commit geçmişinde bir değişiklik varsa, git diff kullan
+          # Checking the status of the repository to detect any changes
           echo "Checking for changes in the microservices..."
 
-          # Commit sayısını kontrol et ve sadece birden fazla commit varsa diff işlemi yap
-          if [ $(git rev-list --count HEAD) -gt 1 ]; then
-            CHANGED_SERVICES=$(git diff --name-only HEAD~1 HEAD | grep -E '^(flight-ms|user-ms|notification-ms)/' | cut -d'/' -f1 | sort -u | tr '\n' ',')
-            echo "Detected changes in the following services: $CHANGED_SERVICES"
+          # Check for uncommitted changes
+          CHANGED_FILES=$(git status --porcelain)
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No uncommitted changes detected."
           else
-            echo "No previous commit to compare. Skipping diff check."
-            CHANGED_SERVICES=""
+            echo "Detected the following changes:"
+            echo "$CHANGED_FILES"
           fi
 
-          # Eğer değişiklik varsa, değişen servisleri GitHub environment'a yaz
+          # Find changed services from the specific folders
+          CHANGED_SERVICES=$(echo "$CHANGED_FILES" | grep -E '^(M|A|D)\s+(flight-ms|user-ms|notification-ms)' | cut -d' ' -f2 | cut -d'/' -f1 | sort -u | tr '\n' ',')
+
           if [ -z "$CHANGED_SERVICES" ]; then
             echo "No changes detected in the specified microservices."
           else
+            echo "Detected changes in the following services: $CHANGED_SERVICES"
             echo "services=${CHANGED_SERVICES}" >> $GITHUB_ENV
           fi
         env:
           services: ${{ env.services }}
+
 
 
   Build-and-Deploy:
