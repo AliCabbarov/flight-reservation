@@ -18,32 +18,21 @@ jobs:
       - name: Detect Changed Microservices
         id: detect
         run: |
-          # Checking the status of the repository to detect any changes
-          echo "Checking for changes in the microservices..."
+          # Fetch all history and commits
+          git fetch --prune --unshallow
 
-          # Check for uncommitted changes
-          CHANGED_FILES=$(git status --porcelain)
+          # Check for changes in the last commit compared to the previous one
+          CHANGED_SERVICES=$(git diff --name-only HEAD~1 HEAD | grep '^flight-reservation/' | grep -E 'flight-ms|user-ms|notification-ms' | cut -d'/' -f2 | sort -u | tr '\n' ',')
 
-          if [ -z "$CHANGED_FILES" ]; then
-            echo "No uncommitted changes detected."
-          else
-            echo "Detected the following changes:"
-            echo "$CHANGED_FILES"
-          fi
-
-          # Find changed services from the specific folders
-          CHANGED_SERVICES=$(echo "$CHANGED_FILES" | grep -E '^(M|A|D)\s+(flight-ms|user-ms|notification-ms)' | cut -d' ' -f2 | cut -d'/' -f1 | sort -u | tr '\n' ',')
-
+          # Output results
           if [ -z "$CHANGED_SERVICES" ]; then
             echo "No changes detected in the specified microservices."
           else
             echo "Detected changes in the following services: $CHANGED_SERVICES"
             echo "services=${CHANGED_SERVICES}" >> $GITHUB_ENV
           fi
-        env:
-          services: ${{ env.services }}
-
-
+  
+  
 
   Build-and-Deploy:
     needs: Detect-Changes
