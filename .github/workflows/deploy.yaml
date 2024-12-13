@@ -1,4 +1,4 @@
-name: Backend CI/CD Pipeline
+name: Frontend CI/CD Pipeline
 
 on:
   push:
@@ -6,39 +6,11 @@ on:
       - main
 
 jobs:
-  Detect-Changes:
+  Build:
     runs-on: ubuntu-latest
-    outputs:
-      changed_services: ${{ steps.detect.outputs.services }}
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Detect Changed Microservices
-        id: detect
-        run: |
-          # Fetch all history and commits
-          git fetch --prune --unshallow
-
-          # Check for changes in the last commit compared to the previous one
-          CHANGED_SERVICES=$(git diff --name-only HEAD~1 HEAD | grep '^flight-reservation/' | grep -E 'flight-ms|user-ms|notification-ms' | cut -d'/' -f2 | sort -u | tr '\n' ',')
-
-          # Output results
-          if [ -z "$CHANGED_SERVICES" ]; then
-            echo "No changes detected in the specified microservices."
-          else
-            echo "Detected changes in the following services: $CHANGED_SERVICES"
-            echo "services=${CHANGED_SERVICES}" >> $GITHUB_ENV
-          fi
-  
-  
-
-  Build-and-Deploy:
-    needs: Detect-Changes
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Log in to Docker Hub
@@ -47,32 +19,37 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push Docker Images for Changed Microservices
+      - name: Build Docker image
         run: |
-          # Eğer değişen servisler varsa, Docker image'ları oluştur ve push et
-          if [ -z "${{ needs.Detect-Changes.outputs.changed_services }}" ]; then
-            echo "No services detected for build and deploy."
-          else
-            for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr ',' ' '); do
-              echo "Building and pushing Docker image for $service..."
-              docker build -t ${{ secrets.DOCKER_USERNAME }}/$service:latest $service
-              docker push ${{ secrets.DOCKER_USERNAME }}/$service:latest
-            done
-          fi
+          docker build -t /user-ms/Dockerfile ${{ secrets.DOCKER_USERNAME }}/user-ms:latest .
 
-      - name: Deploy to Kubernetes
+      - name: Push Docker image to Docker Hub
         run: |
-          # Eğer değişen servisler varsa, Kubernetes üzerine deploy et
-          if [ -z "${{ needs.Detect-Changes.outputs.changed_services }}" ]; then
-            echo "No services detected for Kubernetes deployment."
-          else
-            for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr "," " "); do
-              echo "Deploying $service to Kubernetes..."
-              kubectl apply -f k8s/$service-deploy.yaml
-            done
-          fi
+          docker push ${{ secrets.DOCKER_USERNAME }}/user-ms:latest
+
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: kubectl - Google Cloud GKE cluster
+        uses: ameydev/gke-kubectl-action@master
+        with:
+          args: apply -f k8s/user-ms-deploy.yaml
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
           CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
           ZONE_NAME: ${{ secrets.GKE_ZONE_NAME }}
+
+
+
+
+
+
+
+
+
+
