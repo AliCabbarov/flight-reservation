@@ -30,6 +30,9 @@ jobs:
     needs: Gradle-build
     runs-on: ubuntu-latest
     steps:
+      - name: List files for debugging
+        run: |
+          ls -R user-ms  # user-ms dizinindeki dosyaları listele
 
       - name: Build & Push Docker image
         uses: mr-smithers-excellent/docker-build-push@v5
