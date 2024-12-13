@@ -6,8 +6,9 @@ on:
       - main
 
 jobs:
-  Docker-Build:
+  Gradle-build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -23,6 +24,13 @@ jobs:
         run: ./gradlew clean build
 
 
+
+
+  Docker-Build:
+    needs: Gradle-build
+    runs-on: ubuntu-latest
+    steps:
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -34,7 +42,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build . -t ${{ secrets.DOCKER_USERNAME }}/user-ms:latest -f user-ms/Dockerfile
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-ms:latest -f user-ms/Dockerfile .
 
       - name: Push Docker image to Docker Hub
         run: |
