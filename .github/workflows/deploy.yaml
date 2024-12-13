@@ -49,10 +49,12 @@ jobs:
         uses: ameydev/gke-kubectl-action@master
         with:
           args: |
-            for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr ',' ' '); do
+            bash -c '
+            for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr "," " "); do
               echo "Deploying $service to Kubernetes..."
               kubectl apply -f flight-reservation/k8s/$service-deploy.yaml
             done
+            '
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
