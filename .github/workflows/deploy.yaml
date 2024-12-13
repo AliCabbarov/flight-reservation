@@ -1,0 +1,60 @@
+name: Backend CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Detect-Changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed_services: ${{ steps.detect.outputs.services }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Detect Changed Microservices
+        id: detect
+        run: |
+          # Find changes in microservices directories
+          CHANGED_SERVICES=$(git diff --name-only HEAD^ HEAD | grep '^flight-reservation/' | grep -E 'flight-ms|user-ms|notification-ms' | cut -d'/' -f2 | sort -u | tr '\n' ',')
+          echo "services=${CHANGED_SERVICES}" >> $GITHUB_ENV
+        env:
+          services: ${{ env.services }}
+
+  Build-and-Deploy:
+    needs: Detect-Changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Images for Changed Microservices
+        run: |
+          for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr ',' ' '); do
+            echo "Building and pushing Docker image for $service..."
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/$service:latest flight-reservation/$service
+            docker push ${{ secrets.DOCKER_USERNAME }}/$service:latest
+          done
+
+      - name: Deploy to Kubernetes
+        uses: ameydev/gke-kubectl-action@master
+        with:
+          args: |
+            for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr ',' ' '); do
+              echo "Deploying $service to Kubernetes..."
+              kubectl apply -f flight-reservation/k8s/$service-deploy.yaml
+            done
+        env:
+          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+          CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
+          ZONE_NAME: ${{ secrets.GKE_ZONE_NAME }}

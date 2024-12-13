@@ -15,6 +15,7 @@ spec:
       containers:
         - name: notification-ms-backend
           image: srthealikk/flight-notification-ms:1.0.2
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
