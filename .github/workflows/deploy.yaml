@@ -18,9 +18,13 @@ jobs:
       - name: Detect Changed Microservices
         id: detect
         run: |
+          # Navigate to the root folder containing .git
+          cd flight-reservation
+          
           # Find changes in microservices directories
-          CHANGED_SERVICES=$(git diff --name-only HEAD^ HEAD | grep '^flight-reservation/' | grep -E 'flight-ms|user-ms|notification-ms' | cut -d'/' -f2 | sort -u | tr '\n' ',')
+          CHANGED_SERVICES=$(git diff --name-only HEAD^ HEAD | grep -E '^(flight-ms|user-ms|notification-ms)/' | cut -d'/' -f1 | sort -u | tr '\n' ',')
           echo "services=${CHANGED_SERVICES}" >> $GITHUB_ENV
+          echo "Changed services: ${CHANGED_SERVICES}"
         env:
           services: ${{ env.services }}
 
@@ -39,17 +43,21 @@ jobs:
 
       - name: Build and Push Docker Images for Changed Microservices
         run: |
+          cd flight-reservation
+          
           for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr ',' ' '); do
             echo "Building and pushing Docker image for $service..."
-            docker build -t ${{ secrets.DOCKER_USERNAME }}/$service:latest flight-reservation/$service
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/$service:latest $service
             docker push ${{ secrets.DOCKER_USERNAME }}/$service:latest
           done
 
       - name: Deploy to Kubernetes
         run: |
+          cd flight-reservation
+          
           for service in $(echo ${{ needs.Detect-Changes.outputs.changed_services }} | tr "," " "); do
             echo "Deploying $service to Kubernetes..."
-            kubectl apply -f flight-reservation/k8s/$service-deploy.yaml
+            kubectl apply -f k8s/$service-deploy.yaml
           done
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
