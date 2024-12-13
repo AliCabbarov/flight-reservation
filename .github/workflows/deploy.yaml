@@ -46,7 +46,7 @@ jobs:
 
 
   Deploy:
-    needs: Gradle-Docker-Build
+#    needs: Gradle-Docker-Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
