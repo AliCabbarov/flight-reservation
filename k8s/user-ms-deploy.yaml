@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: user-ms-backend
-          image: srthealikk/flight-user-ms:latest
+          image: srthealikk/user-ms:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
