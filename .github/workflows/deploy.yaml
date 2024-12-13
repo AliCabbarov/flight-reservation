@@ -18,19 +18,18 @@ jobs:
       - name: Detect Changed Microservices
         id: detect
         run: |
-          # Git diff ile değişiklikleri kontrol et
-          echo "Checking for changes in the microservices..."
-          
           # Eğer commit geçmişinde bir değişiklik varsa, git diff kullan
+          echo "Checking for changes in the microservices..."
+
+          # Commit sayısını kontrol et ve sadece birden fazla commit varsa diff işlemi yap
           if [ $(git rev-list --count HEAD) -gt 1 ]; then
-            git diff --name-only HEAD~1 HEAD
             CHANGED_SERVICES=$(git diff --name-only HEAD~1 HEAD | grep -E '^(flight-ms|user-ms|notification-ms)/' | cut -d'/' -f1 | sort -u | tr '\n' ',')
             echo "Detected changes in the following services: $CHANGED_SERVICES"
           else
             echo "No previous commit to compare. Skipping diff check."
             CHANGED_SERVICES=""
           fi
-          
+
           # Eğer değişiklik varsa, değişen servisleri GitHub environment'a yaz
           if [ -z "$CHANGED_SERVICES" ]; then
             echo "No changes detected in the specified microservices."
@@ -39,6 +38,7 @@ jobs:
           fi
         env:
           services: ${{ env.services }}
+
 
   Build-and-Deploy:
     needs: Detect-Changes
