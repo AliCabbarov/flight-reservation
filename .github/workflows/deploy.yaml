@@ -64,14 +64,13 @@ jobs:
 
       - name: Update Kubernetes Deployment file
         run: |
-          sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }}|" k8s/user-ms-deploy.yaml
+          sed -i "s|^\([[:space:]]*image: \).*|\1${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }}|" k8s/user-ms-deploy.yaml
 
       - name: kubectl - Google Cloud GKE cluster
         uses: ameydev/gke-kubectl-action@master
         with:
           args: |
-            apply -f k8s/user-ms-deploy.yaml
-            kubectl rollout restart deployment/user-ms-backend-app-deployment
+             rollout restart deployment/user-ms-backend-app-deployment
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
