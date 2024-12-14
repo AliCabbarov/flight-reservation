@@ -70,7 +70,7 @@ jobs:
         uses: ameydev/gke-kubectl-action@master
         with:
           args: |
-             rollout restart deployment/user-ms-backend-app-deployment
+            apply -f k8s/user-ms-deploy.yaml
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
