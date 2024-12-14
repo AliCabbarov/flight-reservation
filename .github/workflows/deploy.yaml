@@ -62,7 +62,7 @@ jobs:
         uses: ameydev/gke-kubectl-action@master
         with:
           args: |
-            kubectl apply -f k8s/user-ms-deploy.yaml
+            apply -f k8s/user-ms-deploy.yaml
             kubectl rollout restart deployment/user-ms-backend-app-deployment
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
