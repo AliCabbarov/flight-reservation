@@ -41,4 +41,8 @@ public class AuthenticationController {
         passwordService.forgetPassword(forgetPasswordDto.getEmail());
         return ResponseEntity.ok().build();
     }
+    @GetMapping
+    public ResponseEntity<String> test() {
+        return ResponseEntity.ok("Hello");
+    }
 }
