@@ -43,6 +43,6 @@ public class AuthenticationController {
     }
     @GetMapping("/deploy")
     public ResponseEntity<String> test() {
-        return ResponseEntity.ok("User service running successfully. Deploy Date: 2024 12 14 12:57");
+        return ResponseEntity.ok("User service running successfully. Deploy Date: 2024 12 14 2:13");
     }
 }

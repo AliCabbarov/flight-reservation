@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  Gradle-Docker-Build:
+  Deploy-User-MS:
     runs-on: ubuntu-latest
     steps:
 
@@ -20,7 +20,6 @@ jobs:
           java-version: '17'
           cache: gradle
 
-
       - name: Ensure gradlew has execute permissions
         run: chmod +x ./gradlew
 
@@ -32,7 +31,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
 
       - name: Generate Docker tag
         id: generate_tag
@@ -48,21 +46,13 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }}
 
-
       - uses: actions/checkout@v3
         with:
           ref: main
 
       - name: Update Kubernetes Deployment file
         run: |
-          sed -i "s|^\([[:space:]]*image: \).*|\1${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }}|" k8s/user-ms-deploy.yaml
-          
-
-      - name: Debug Show updated YAML
-        run: |
-          echo "Showing updated k8s/user-ms-deploy.yaml:"
-          cat k8s/user-ms-deploy.yaml
-          
+          sed -i "s|^\([[:space:]]*image: \).*|\1${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }}|" k8s/user-ms-deploy.yaml    
 
       - name: kubectl - Google Cloud GKE cluster
         uses: ameydev/gke-kubectl-action@master
@@ -74,36 +64,6 @@ jobs:
           APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
           CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
           ZONE_NAME: ${{ secrets.GKE_ZONE_NAME }}
-
-
-
-
-
-#  Deploy:
-#    needs: Gradle-Docker-Build
-#    runs-on: ubuntu-latest
-#    steps:
-#
-#
-#
-#      - uses: actions/checkout@v3
-#        with:
-#          ref: main
-#
-#      - name: Update Kubernetes Deployment file
-#        run: |
-#          sed -i "s|^\([[:space:]]*image: \).*|\1${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }}|" k8s/user-ms-deploy.yaml
-#
-#      - name: kubectl - Google Cloud GKE cluster
-#        uses: ameydev/gke-kubectl-action@master
-#        with:
-#          args: |
-#            apply -f k8s/user-ms-deploy.yaml
-#        env:
-#          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-#          APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
-#          CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
-#          ZONE_NAME: ${{ secrets.GKE_ZONE_NAME }}
 
 
 
