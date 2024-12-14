@@ -41,8 +41,8 @@ public class AuthenticationController {
         passwordService.forgetPassword(forgetPasswordDto.getEmail());
         return ResponseEntity.ok().build();
     }
-    @GetMapping
+    @GetMapping("/deploy")
     public ResponseEntity<String> test() {
-        return ResponseEntity.ok("Hello");
+        return ResponseEntity.ok("User service running successfully. Deploy Date: 2024 12 14 11:33");
     }
 }
