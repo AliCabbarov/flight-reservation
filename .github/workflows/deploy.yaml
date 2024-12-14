@@ -66,6 +66,11 @@ jobs:
         run: |
           sed -i "s|^\([[:space:]]*image: \).*|\1${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }}|" k8s/user-ms-deploy.yaml
 
+      - name: Debug Show updated YAML
+        run: |
+          echo "Showing updated k8s/user-ms-deploy.yaml:"
+          cat k8s/user-ms-deploy.yaml
+
       - name: kubectl - Google Cloud GKE cluster
         uses: ameydev/gke-kubectl-action@master
         with:
