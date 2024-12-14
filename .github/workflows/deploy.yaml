@@ -48,6 +48,15 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }}
 
+      - name: Update Kubernetes Deployment file
+        run: |
+          sed -i "s|^\([[:space:]]*image: \).*|\1${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }}|" k8s/user-ms-deploy.yaml
+
+      - name: Debug Show updated YAML
+        run: |
+          echo "Showing updated k8s/user-ms-deploy.yaml:"
+          cat k8s/user-ms-deploy.yaml
+
 
 
 
