@@ -22,4 +22,8 @@ public class BeanConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    @Bean
+    public void test() {
+        System.out.println("last build successfully");
+    }
 }

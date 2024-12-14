@@ -56,10 +56,6 @@ jobs:
         with:
           ref: main
 
-      - name: where is the file
-        run: |
-          cd k8s
-          ls -l
 
 
       - name: kubectl - Google Cloud GKE cluster
