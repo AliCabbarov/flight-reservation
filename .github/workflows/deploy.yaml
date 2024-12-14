@@ -20,6 +20,7 @@ jobs:
           java-version: '17'
           cache: gradle
 
+
       - name: Ensure gradlew has execute permissions
         run: chmod +x ./gradlew
 
@@ -33,14 +34,19 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
 
+      - name: Generate Docker tag
+        id: generate_tag
+        run: echo "tag=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+
       - name: Build Docker image
         run: |
           cd user-ms
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-ms:latest -f Dockerfile .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }} -f Dockerfile .
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/user-ms:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }}
 
 
 
@@ -56,7 +62,9 @@ jobs:
         with:
           ref: main
 
-
+      - name: Update Kubernetes Deployment file
+        run: |
+          sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/user-ms:${{ env.tag }}|" k8s/user-ms-deploy.yaml
 
       - name: kubectl - Google Cloud GKE cluster
         uses: ameydev/gke-kubectl-action@master
