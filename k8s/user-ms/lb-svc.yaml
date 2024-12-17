@@ -10,5 +10,4 @@ spec:
       targetPort: 8083
   selector:
     app: user-ms-backend-tier
-    svc: flight-ms-backend-svc
 

@@ -3,22 +3,22 @@ kind: Deployment
 metadata:
   name: flight-ms-backend-app-deployment
 spec:
+  revisionHistoryLimit: 0
   replicas: 1
   selector:
     matchLabels:
-      app: flight-ms-backend-tier
+      app: user-ms-backend-tier
   template:
     metadata:
       labels:
-        app: flight-ms-backend-tier
-        svc: flight-ms-backend-svc
+        app: user-ms-backend-tier
     spec:
       containers:
         - name: flight-ms-backend
-          image: srthealikk/flight-ms:latest
+          image: srthealikk/flight-ms:20241217055327
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 8083
           env:
             - name: DB_URL
               value: jdbc:postgresql://postgresql-svc-cip:5432/postgres
