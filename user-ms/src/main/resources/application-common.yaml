@@ -11,3 +11,6 @@ spring:
 server:
   servlet:
     context-path: /user-ms
+
+
+  port: ${APP_PORT:8081}

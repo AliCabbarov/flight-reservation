@@ -18,7 +18,7 @@ spec:
           image: srthealikk/flight-ms:20241217055327
           imagePullPolicy: Always
           ports:
-            - containerPort: 8083
+            - containerPort: 8080
           env:
             - name: DB_URL
               value: jdbc:postgresql://postgresql-svc-cip:5432/postgres
