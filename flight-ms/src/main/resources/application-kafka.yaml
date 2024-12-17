@@ -2,3 +2,8 @@ kafka:
   topic:
     admin-topic: admin-notification
     operator-topic: operator-notification
+
+
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST:localhost:9092}

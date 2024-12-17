@@ -14,6 +14,7 @@ import ingress.flightms.repository.PlaneRepository;
 import ingress.flightms.service.PlaneService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -101,9 +102,9 @@ public class PlaneServiceImpl implements PlaneService {
     @Override
     public void deletePlane(Long id) {
 
-        Optional<Plane> plane = planeRepository.findById(id);
-        plane.ifPresent(value -> value.setStatus(false));
-
+        Plane plane = planeRepository.findByIdAndStatus(id,true).orElseThrow(() -> new NotFoundException(NOT_FOUND, "Plane not found with ID: " + id));
+        plane.setStatus(false);
+        planeRepository.save(plane);
     }
 
     @Override
@@ -115,7 +116,7 @@ public class PlaneServiceImpl implements PlaneService {
 
     @Override
     public Set<PlaneAllResponseDto> getAllPlanes() {
-        return planeRepository.findAll().stream()
+        return planeRepository.findByStatus(true).stream()
                 .map(plane -> {
                     PlaneAllResponseDto res = PlaneAllResponseDto.builder()
                             .capacity(plane.getCapacity())
