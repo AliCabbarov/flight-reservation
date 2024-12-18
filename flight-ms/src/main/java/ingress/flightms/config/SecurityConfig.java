@@ -35,7 +35,7 @@ public class SecurityConfig {
                                 EndPoints.SWAGGER_UI,
                                 EndPoints.SWAGGER_WEBJARS,
                                 EndPoints.SWAGGER_UI_HTML).permitAll()
-                        .requestMatchers("/api/v1/airline/**").hasAnyAuthority(Roles.ADMIN.name(), Roles.OPERATOR.name())
+                        .requestMatchers("/api/v1/airlines/**").hasAnyAuthority(Roles.ADMIN.name(), Roles.OPERATOR.name())
                         .requestMatchers("/api/v1/tickets/**").authenticated()
                         .requestMatchers("/api/v1/booking/**").authenticated()
                         .requestMatchers("/api/v1/files/**").authenticated()
