@@ -35,14 +35,14 @@ public class SecurityConfig {
                                 EndPoints.SWAGGER_UI,
                                 EndPoints.SWAGGER_WEBJARS,
                                 EndPoints.SWAGGER_UI_HTML).permitAll()
-//                        .requestMatchers("/api/v1/airline/**").hasAnyAuthority(Roles.ADMIN.name(), Roles.OPERATOR.name())
-//                        .requestMatchers("/api/v1/tickets/**").authenticated()
-//                        .requestMatchers("/api/v1/booking/**").authenticated()
-//                        .requestMatchers("/api/v1/files/**").authenticated()
-//                        .requestMatchers("/api/v1/flights/**").permitAll()
-//                        .requestMatchers("api/v1/planes/**").permitAll()
-//                        .requestMatchers("api/v1/plane-place/**").hasAnyAuthority(Roles.ADMIN.name(), Roles.OPERATOR.name()))
-                        .anyRequest().permitAll())
+                        .requestMatchers("/api/v1/airline/**").hasAnyAuthority(Roles.ADMIN.name(), Roles.OPERATOR.name())
+                        .requestMatchers("/api/v1/tickets/**").authenticated()
+                        .requestMatchers("/api/v1/booking/**").authenticated()
+                        .requestMatchers("/api/v1/files/**").authenticated()
+                        .requestMatchers("/api/v1/flights/**").authenticated()
+                        .requestMatchers("api/v1/planes/**").authenticated()
+                        .requestMatchers("api/v1/plane-place/**").hasAnyAuthority(Roles.ADMIN.name(), Roles.OPERATOR.name()))
+//                        .anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationService, UsernamePasswordAuthenticationFilter.class);
         return security.build();
