@@ -13,9 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingSearchResponseDto {
-    private Long flightId;
+    private Long id;
     private String from;
     private String to;
-    private LocalDateTime date;
     private BigDecimal price;
+    private LocalDateTime departureTime;
+    private LocalDateTime arrivalTime;
 }

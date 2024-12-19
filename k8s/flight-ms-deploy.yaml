@@ -7,15 +7,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user-ms-backend-tier
+      app: flight-ms-backend-tier
   template:
     metadata:
       labels:
-        app: user-ms-backend-tier
+        app: flight-ms-backend-tier
     spec:
       containers:
         - name: flight-ms-backend
-          image: srthealikk/flight-ms:20241219090544
+          image: srthealikk/flight-ms:20241219093835
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

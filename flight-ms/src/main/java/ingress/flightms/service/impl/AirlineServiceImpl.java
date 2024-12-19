@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,6 +68,7 @@ public class AirlineServiceImpl implements AirlineService {
     }
 
     @Override
+    @Transactional
     public void deleteAirline(long id) {
         Airline airline = airlineRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Exceptions.NOT_FOUND, "Airline not found with id " + id));
