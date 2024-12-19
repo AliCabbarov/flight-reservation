@@ -19,10 +19,12 @@ public class SecurityConfig {
 
 
     @Bean
+    @SuppressWarnings("all")
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
         security
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable).cors();
+
+        security
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 EndPoints.SWAGGER_V2,
@@ -41,7 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/files/**").authenticated()
                         .requestMatchers("/api/v1/flights/**").authenticated()
                         .requestMatchers("api/v1/planes/**").authenticated()
-                        .requestMatchers("api/v1/plane-place/**").hasAnyAuthority(Roles.ADMIN.name(), Roles.OPERATOR.name()))
+                        .requestMatchers("api/v1/plane-places/**").hasAnyAuthority(Roles.ADMIN.name(), Roles.OPERATOR.name()))
 //                        .anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationService, UsernamePasswordAuthenticationFilter.class);

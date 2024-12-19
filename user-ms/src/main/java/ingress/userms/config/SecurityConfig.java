@@ -18,10 +18,12 @@ public class SecurityConfig {
 
 
     @Bean
+    @SuppressWarnings("all")
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
         security
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors();
+        security
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 EndPoints.SWAGGER_V2,

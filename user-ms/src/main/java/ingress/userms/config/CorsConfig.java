@@ -15,23 +15,17 @@ public class CorsConfig implements WebMvcConfigurer {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOrigin("http://localhost:63342"); // for specific origin
-         corsConfiguration.addAllowedOriginPattern("*"); // for all origins
+
+        // Allowed origins (add your server's IP and local development URL)
+        corsConfiguration.addAllowedOrigin("http://localhost:63342"); // Local development
+        corsConfiguration.addAllowedOrigin("http://104.155.109.215"); // Replace with your server IP or domain
+
+        corsConfiguration.addAllowedOriginPattern("*"); // Fallback for all origins
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedMethod("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(source);
-    }
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:63342") // for specific origin
-                 .allowedOriginPatterns("*") // for all origins
-                .allowedMethods("*")
-                .allowedHeaders("*")
-                .allowCredentials(true);
     }
 }
