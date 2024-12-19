@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: flight-ms-backend
-          image: srthealikk/flight-ms:20241217055327
+          image: srthealikk/flight-ms:20241219090544
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -29,6 +29,6 @@ spec:
             - name: APP_HOST
               value: "34.76.44.68"
             - name: APP_PORT
-              value: "80"
+              value: "8080"
             - name: KAFKA_HOST
               value: "kafka:9092"
