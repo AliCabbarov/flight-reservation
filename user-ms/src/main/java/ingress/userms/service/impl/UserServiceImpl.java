@@ -8,6 +8,8 @@ import ingress.userms.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static ingress.userms.model.enums.Exceptions.NOT_FOUND;
 
 @Service
@@ -31,5 +33,13 @@ public class UserServiceImpl implements UserService {
         user.setStatus(false);
         user.setIsEnabled(false);
         userRepository.save(user);
+    }
+
+    @Override
+    public List<UserResponseDto> getAll() {
+        List<User> users = userRepository.findByStatusAndIsEnabled(true, true);
+        return users.stream()
+                .map(user -> new UserResponseDto(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail()))
+                .toList();
     }
 }

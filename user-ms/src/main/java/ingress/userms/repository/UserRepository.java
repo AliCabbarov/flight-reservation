@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<List<String>> findEmailsByRole(@Param("role") Roles role);
 
     Optional<User> findByEmailAndIsEnabledAndStatusAndIsActive(String email, Boolean isEnabled, Boolean status, Boolean isActive);
+
+    List<User> findByStatusAndIsEnabled(Boolean status, Boolean isEnabled);
 }
