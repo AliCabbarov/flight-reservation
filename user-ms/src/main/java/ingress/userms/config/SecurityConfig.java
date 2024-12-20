@@ -37,7 +37,7 @@ public class SecurityConfig {
                                 EndPoints.SWAGGER_WEBJARS,
                                 EndPoints.SWAGGER_UI_HTML).permitAll()
                         .requestMatchers("/api/v1/operators/register").permitAll()
-                        .requestMatchers("api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/operators/register").permitAll()
                         .requestMatchers("/api/v1/operators/admin/operator/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/v1/users/info/**").permitAll()

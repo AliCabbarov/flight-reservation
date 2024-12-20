@@ -17,7 +17,19 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     public UserResponseDto getUserDetailsById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ApplicationException(NOT_FOUND, id));
+        User user = getUser(id);
         return new UserResponseDto(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
+    }
+
+    private User getUser(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new ApplicationException(NOT_FOUND, id));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        User user = getUser(id);
+        user.setStatus(false);
+        user.setIsEnabled(false);
+        userRepository.save(user);
     }
 }

@@ -8,4 +8,5 @@ public interface UserService {
 
     UserResponseDto getUserDetailsById(Long id);
 
+    void deleteById(Long id);
 }
