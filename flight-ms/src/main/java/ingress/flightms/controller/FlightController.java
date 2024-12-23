@@ -45,7 +45,7 @@ public class FlightController {
         return ResponseEntity.ok(dtoList);
     }
 
-    @GetMapping("approval-state/{state}")
+    @GetMapping("/approval-state/{state}")
     public ResponseEntity<List<FlightDto>> getFlightsByState(@PathVariable String state) {
         List<FlightDto> dtoList = flightService.getFlightsByState(state);
         return ResponseEntity.ok(dtoList);
