@@ -8,13 +8,14 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @Scope("prototype")
 public class FlightSpecification {
-    public Specification<Flight> search(String to, String from, LocalDateTime initialDate, BigDecimal initialPrice) {
+    public Specification<Flight> search(String to, String from, LocalDate initialDate, BigDecimal initialPrice) {
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
             if (from != null) {
@@ -44,11 +45,13 @@ public class FlightSpecification {
                 }
             }
             if (initialDate != null) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("departureTime"), initialDate));
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("departureTime"), LocalDateTime.of(initialDate, LocalDateTime.MIN.toLocalTime())));
             }
             if (initialPrice != null) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("price"), initialPrice));
             }
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("status"), true));
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("approvalState"),"APPROVED"));
             return predicate;
         };
     }

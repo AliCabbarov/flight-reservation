@@ -15,4 +15,6 @@ public class JwtSessionData {
     private String username;
     private Long userId;
     private String role;
+    private String token;
+    private String tokenWithPrefix;
 }

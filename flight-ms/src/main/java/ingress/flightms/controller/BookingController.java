@@ -28,8 +28,8 @@ public class BookingController {
             @RequestParam(required = false) String to,
             @RequestParam(required = false) BigDecimal initialPrice,
             @RequestParam(required = false) String from,
-            @RequestParam(required = false) String date) {
-        return ResponseEntity.ok(bookingService.search(to, from, date, initialPrice));
+            @RequestParam(required = false) String departureDate) {
+        return ResponseEntity.ok(bookingService.search(to, from, departureDate, initialPrice));
     }
     @GetMapping("/available-seats/{id}")
     public ResponseEntity<FlightResponseDto> availableSeats(@PathVariable(value = "id") Long flightId) {

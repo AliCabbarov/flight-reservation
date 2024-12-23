@@ -44,7 +44,7 @@ public class JwtAuthenticationService extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             Jws<Claims> claimsJws = jwtService.parseToken(token, response);
-            Authentication authentication = getAuthentication(claimsJws.getPayload(), response);
+            Authentication authentication = getAuthentication(claimsJws.getPayload(), response,token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             jwtSessionData.setUserId(0L);
@@ -54,7 +54,7 @@ public class JwtAuthenticationService extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private Authentication getAuthentication(Claims claims, HttpServletResponse response) {
+    private Authentication getAuthentication(Claims claims, HttpServletResponse response,String token) {
         log.info("Will be mapped this jwt claims data {}", claims);
 
         try {
@@ -63,6 +63,8 @@ public class JwtAuthenticationService extends OncePerRequestFilter {
             jwtSessionData.setUserId(claims.get("userId", Long.class));
             jwtSessionData.setUsername(claims.get("username", String.class));
             jwtSessionData.setRole(role);
+            jwtSessionData.setToken(token);
+            jwtSessionData.setTokenWithPrefix("Bearer " + token);
             return new UsernamePasswordAuthenticationToken(null, claims.get("username", String.class), List.of(new SimpleGrantedAuthority(role)));
 
         } catch (Exception e) {

@@ -41,6 +41,7 @@ public class JwtAuthenticationService extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String header = request.getHeader("Authorization");
+        log.info("Auth Header: {}", header);
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             Jws<Claims> claimsJws = jwtService.parseToken(token, response);

@@ -21,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -70,11 +71,11 @@ public class BookingServiceImpl implements BookingService {
                 .build();
     }
 
-    private LocalDateTime convertToDateTime(String date) {
+    private LocalDate convertToDateTime(String date) {
         if (date != null && !date.isEmpty()) {
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                return LocalDateTime.parse(date, formatter);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                return LocalDate.parse(date, formatter);
             } catch (DateTimeParseException e) {
                 log.error("Invalid date format: {}", date, e);
                 return null;

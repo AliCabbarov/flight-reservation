@@ -24,8 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static ingress.flightms.model.enums.Exceptions.*;
@@ -130,7 +133,7 @@ public class FlightServiceImpl implements FlightService {
         flight.setFeedbackMessage(feedback);
         flightRepository.save(flight);
 
-        var operatorDto = userClient.getUserDetailsById(flight.getCreatedBy());
+        var operatorDto = userClient.getUserDetailsById(jwtSessionData.getTokenWithPrefix(), flight.getCreatedBy());
         log.info("Flight with ID: {} approved", id);
         OperatorNotificationDto notification = new OperatorNotificationDto(
                 flight.getId(),
@@ -159,7 +162,7 @@ public class FlightServiceImpl implements FlightService {
         flight.setApprovalState(ApprovalState.REJECTED);
         flight.setFeedbackMessage(feedback);
         flightRepository.save(flight);
-        var operatorDto = userClient.getUserDetailsById(flight.getCreatedBy());
+        var operatorDto = userClient.getUserDetailsById(jwtSessionData.getTokenWithPrefix(), flight.getCreatedBy());
 
         log.info("Flight with ID: {} rejected", id);
         OperatorNotificationDto notification = new OperatorNotificationDto(
@@ -178,19 +181,26 @@ public class FlightServiceImpl implements FlightService {
         log.info("Fetching flights with state PENDING");
 
         List<Flight> flights = flightRepository.findByApprovalState(ApprovalState.PENDING);
+        Map<Long, UserResponseDto> res = new HashMap<>();
 
-        Map<Long, UserResponseDto> operatorDetailsMap = flights.stream()
+        flights.stream()
                 .map(Flight::getCreatedBy)
                 .distinct()
-                .collect(Collectors.toMap(
-                        userId -> userId,
-                        userClient::getUserDetailsById
-                ));
+                .forEach(id -> {
+                    try {
+                        UserResponseDto responseDto = userClient.getUserDetailsById(jwtSessionData.getTokenWithPrefix(), id);
+                        res.put(id, responseDto);
+                    } catch (Exception e) {
+                        log.error("Error while fetching user details for user with ID: {}", id, e);
+                    }
+                });
+
 
         List<FlightDtoByCreatedOperator> flightDtoByCreatedOperators = flights.stream()
+                .filter(flight -> res.containsKey(flight.getCreatedBy()))
                 .map(flight -> {
                     FlightDto flightDto = flightMapper.toDto(flight);
-                    UserResponseDto operatorDto = operatorDetailsMap.get(flight.getCreatedBy());
+                    UserResponseDto operatorDto = res.get(flight.getCreatedBy());
 
                     return FlightDtoByCreatedOperator.builder()
                             .operatorId(operatorDto.id())
@@ -217,7 +227,6 @@ public class FlightServiceImpl implements FlightService {
         log.info("Total flights found with state {}: {}", state, flights.size());
         return flights;
     }
-
 
 
 }
