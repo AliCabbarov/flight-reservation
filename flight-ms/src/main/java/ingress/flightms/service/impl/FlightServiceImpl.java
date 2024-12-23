@@ -89,11 +89,11 @@ public class FlightServiceImpl implements FlightService {
         var savedFlight = flightRepository.save(flight);
         log.info("Flight created with ID: {}", savedFlight.getId());
 
-        kafkaProducer.notifyAdminForApprovement(ADMIN_TOPIC,
-                new AdminNotificationDto(
-                        jwtSessionData.getUserId(),
-                        savedFlight.getId(),
-                        "Notification for admin for  flight approvement"));
+//        kafkaProducer.notifyAdminForApprovement(ADMIN_TOPIC,
+//                new AdminNotificationDto(
+//                        jwtSessionData.getUserId(),
+//                        savedFlight.getId(),
+//                        "Notification for admin for  flight approvement"));
 
         return flightMapper.toDto(savedFlight);
     }
