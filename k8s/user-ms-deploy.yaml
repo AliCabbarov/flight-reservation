@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: user-ms-backend
-          image: srthealikk/user-ms:20241219093840
+          image: srthealikk/user-ms:20241220055944
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -32,3 +32,4 @@ spec:
               value: "8080"
             - name: KAFKA_HOST
               value: "kafka:9092"
+
