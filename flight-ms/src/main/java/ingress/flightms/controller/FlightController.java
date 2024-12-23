@@ -23,7 +23,11 @@ public class FlightController {
     private final FlightService flightService;
     private final BookingService bookingService;
 
-
+    @GetMapping("/destination")
+    public ResponseEntity<List<String>> getDestination() {
+        List<String> dto = flightService.getDestination();
+        return ResponseEntity.ok(dto);
+    }
     @GetMapping("/{id}")
     public ResponseEntity<FlightDto> getById(@PathVariable Long id) {
         FlightDto dto = flightService.getById(id);

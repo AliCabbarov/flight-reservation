@@ -14,6 +14,7 @@ import ingress.flightms.model.dto.request.FlightRequestDto;
 import ingress.flightms.model.dto.FlightDto;
 import ingress.flightms.model.entity.Flight;
 import ingress.flightms.model.entity.Plane;
+import ingress.flightms.model.enums.Airport;
 import ingress.flightms.model.enums.ApprovalState;
 import ingress.flightms.producer.KafkaProducer;
 import ingress.flightms.repository.FlightRepository;
@@ -30,6 +31,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static ingress.flightms.model.enums.Exceptions.*;
 
@@ -228,5 +230,11 @@ public class FlightServiceImpl implements FlightService {
         return flights;
     }
 
-
+    @Override
+    public List<String> getDestination() {
+        Airport[] values = Airport.values();
+        return Stream.of(values)
+                .map(Enum::name)
+                .collect(Collectors.toList());
+    }
 }

@@ -26,4 +26,6 @@ public interface FlightService {
     List<FlightDtoByCreatedOperator> getPendingFlightsWithOperatorDetails();
 
     List<FlightDto> getFlightsByState(String state);
+
+    List<String> getDestination();
 }
