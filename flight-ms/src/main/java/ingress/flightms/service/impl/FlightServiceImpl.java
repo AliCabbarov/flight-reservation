@@ -146,7 +146,7 @@ public class FlightServiceImpl implements FlightService {
                 "Flight approved successfully with id :" + flight.getId(),
                 feedbackMessage
         );
-        kafkaProducer.notifyOperator(OPERATOR_TOPIC, notification);
+//        kafkaProducer.notifyOperator(OPERATOR_TOPIC, notification);
     }
 
     @Override
@@ -175,7 +175,7 @@ public class FlightServiceImpl implements FlightService {
                 String.valueOf(ApprovalState.REJECTED),
                 "Flight rejected successfully with id :" + flight.getId(),
                 feedbackMessage);
-        kafkaProducer.notifyOperator(OPERATOR_TOPIC, notification);
+//        kafkaProducer.notifyOperator(OPERATOR_TOPIC, notification);
     }
 
     @Override
