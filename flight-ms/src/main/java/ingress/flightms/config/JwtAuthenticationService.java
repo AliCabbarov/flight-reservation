@@ -44,8 +44,14 @@ public class JwtAuthenticationService extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             Jws<Claims> claimsJws = jwtService.parseToken(token, response);
-            Authentication authentication = getAuthentication(claimsJws.getPayload(), response,token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (claimsJws != null) {
+                Authentication authentication = getAuthentication(claimsJws.getPayload(), response, token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                jwtSessionData.setUserId(0L);
+                jwtSessionData.setUsername("eli.cabbarov2003@gmail.com");
+                jwtSessionData.setRole("anonymous");
+            }
         } else {
             jwtSessionData.setUserId(0L);
             jwtSessionData.setUsername("eli.cabbarov2003@gmail.com");
@@ -54,7 +60,7 @@ public class JwtAuthenticationService extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private Authentication getAuthentication(Claims claims, HttpServletResponse response,String token) {
+    private Authentication getAuthentication(Claims claims, HttpServletResponse response, String token) {
         log.info("Will be mapped this jwt claims data {}", claims);
 
         try {

@@ -42,7 +42,8 @@ public final class JwtService {
         } catch (Exception e) {
             log.error("Error parsing token", e);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new RuntimeException("Invalid token");
+//            throw new RuntimeException("Invalid token");
+            return null;
         }
     }
 
