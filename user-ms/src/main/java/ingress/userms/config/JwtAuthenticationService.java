@@ -45,8 +45,14 @@ public class JwtAuthenticationService extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             Jws<Claims> claimsJws = jwtService.parseToken(token, response);
-            Authentication authentication = getAuthentication(claimsJws.getPayload(), response);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (claimsJws != null) {
+                Authentication authentication = getAuthentication(claimsJws.getPayload(), response);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                jwtSessionData.setUserId(0L);
+                jwtSessionData.setUsername("anonymous");
+                jwtSessionData.setRole("anonymous");
+            }
         } else {
             jwtSessionData.setUserId(0L);
             jwtSessionData.setUsername("anonymous");
